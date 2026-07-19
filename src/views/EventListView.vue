@@ -2,13 +2,22 @@
 import EventCard from '@/components/EventCard.vue'
 import CategoryOrganizerCard from '@/components/CategoryOrganizerCard.vue'
 import type {Event} from '@/types'
-import {ref, onMounted} from 'vue'
+import {ref, onMounted,computed,watchEffect} from 'vue'
 import EventService from '@/service/EventService'
 
 const events =ref<Event[] | null>(null)
 
-onMounted(() => {
-  EventService.getEvents()
+const props = defineProps({
+  page: {
+    type: Number,
+    required: true
+  }
+})
+const page = computed(() => props.page)
+
+watchEffect(() => {
+  console.log('Current page inside watchEffect:', page.value)
+  EventService.getEvents(2, page.value)
     .then((response) => {
       console.log(response.data)
       events.value = response.data
