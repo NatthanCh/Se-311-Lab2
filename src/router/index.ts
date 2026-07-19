@@ -7,51 +7,43 @@ import EventRegisterView from '@/views/event/RegisterView.vue'
 import EventEditView from '@/views/event/EditView.vue'
 import EventLayoutView from '@/views/event/LayoutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
-import NetworkErrorView from '@/views/NetworkErrorView.vue'
-
-import UserLayoutView from '@/views/event/LayoutView.vue'
-import UserProfileView from '@/views/user/ProfileView.vue'
-import UserPostsView from '@/views/user/PostsView.vue'
-import HomeView from '@/views/HomeView.vue' 
 
 const router = createRouter({
+
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home-view',
-      component: HomeView 
-    },
-    {
-      path: '/events',
       name: 'event-list-view',
       component: EventListView,
       props: (route) => ({ 
-        page: parseInt(route.query.page as string) || 1,
-        perPage: parseInt(route.query.perPage as string) || 2 
-      })
+    page: parseInt(route.query.page as string) || 1,
+    perPage: parseInt(route.query.perPage as string) || 2 
+  })
     },
-    
     {
       path: '/event/:id',
       name: 'event-layout-view',
       component: EventLayoutView,
       props: true,
       children: [
-        { path: '', name: 'event-detail-view', component: EventDetailView },
-        { path: 'register', name: 'event-register-view', component: EventRegisterView },
-        { path: 'edit', name: 'event-edit-view', component: EventEditView }
-      ]
-    },
-    
-    {
-      path: '/user/:id',
-      name: 'user-layout-view',
-      component: UserLayoutView,
-      props: true,
-      children: [
-        { path: 'profile', name: 'user-profile', component: UserProfileView },
-        { path: 'posts', name: 'user-posts', component: UserPostsView }
+        {
+          path: '',
+          name: 'event-detail-view',
+          component: EventDetailView
+        },
+        {
+          path: 'register',
+          name: 'event-register-view',
+          component: EventRegisterView
+        },
+        {
+          path: 'edit',
+          name: 'event-edit-view',
+          component: EventEditView
+
+        }
+
       ]
     },
     {
@@ -62,6 +54,7 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
+      
       component: AboutView
     },
     {
@@ -69,11 +62,6 @@ const router = createRouter({
       name: '404-resource-view',
       component: NotFoundView,
       props: true
-    },
-    {
-      path: '/network-error',
-      name: 'network-error-view',
-      component: NetworkErrorView
     },
     {
       path: '/:catchAll(.*)',
