@@ -2,11 +2,15 @@
 import EventCard from '@/components/EventCard.vue'
 import CategoryOrganizerCard from '@/components/CategoryOrganizerCard.vue'
 import type { Event } from '@/types'
-import { ref, computed, watchEffect } from 'vue'
+import { ref, onMounted,computed, watchEffect } from 'vue'
 import EventService from '@/service/EventService'
 
 const events = ref<Event[] | null>(null)
-
+const totalEvents = ref(0)
+const hasNextPage = computed(() => {
+  const totalPages = Math.ceil(totalEvents.value / 2)
+  return page.value< totalPages
+})
 const props = defineProps({
   page: {
     type: Number,
@@ -21,6 +25,7 @@ watchEffect(() => {
     .then((response) => {
       console.log(response.data)
       events.value = response.data
+      totalEvents.value = response.headers['x-total-count']
     })
     .catch((error) => {
       console.error('There was an error!', error)
@@ -49,6 +54,7 @@ watchEffect(() => {
       <RouterLink 
         :to="{ name: 'event-list-view', query: { page: page + 1 } }"
         rel="next"
+        v-if="hasNextPage"
       >
         Next Page &#62;
       </RouterLink>
