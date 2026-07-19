@@ -1,16 +1,14 @@
-<script setup lang="ts"> 
-
-const props = withDefaults(
-  defineProps<{
-    resource: string 
-  }>(),
-  {
-    resource: 'page'
-  }
+<script setup lang="ts">
+withDefaults(
+  defineProps<{ resource: string }>(),
+  { resource: 'page' }
 )
 </script>
+
 <template>
-  <h1>Oops!</h1>
-  <h3>The {{ resource }} you're looking for is not here.</h3>
-  <RouterLink :to="{ name: 'event-list-view' }">Back to the home page</RouterLink>
+  <div class="not-found">
+    <h1>Oops!</h1>
+    <h3>The {{ resource }} you're looking for is not here.</h3>
+    <RouterLink :to="{ name: 'home-view' }">Back to Home Page</RouterLink>
+  </div>
 </template>

@@ -27,7 +27,7 @@ defineProps<{
   cursor: pointer;
   border: 1px solid #39495c;
   margin-bottom: 18px;
-  text-align: right; /* จัดข้อความชิดขวาตามโจทย์ */
+  text-align: right; 
 }
 
 .category-organizer-card:hover {
@@ -35,7 +35,6 @@ defineProps<{
   box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
 }
 
-/* ปรับขนาดฟอนต์ให้เท่ากันทั้ง 2 บรรทัดตามโจทย์ */
 .text-detail {
   font-size: 14px;
   margin: 4px 0;
