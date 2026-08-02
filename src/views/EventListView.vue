@@ -2,12 +2,14 @@
 import EventCard from '@/components/EventCard.vue'
 import CategoryOrganizerCard from '@/components/CategoryOrganizerCard.vue'
 import type { Event } from '@/types'
-import { ref, computed, watchEffect } from 'vue'
+import { ref, computed, watchEffect, onMounted } from 'vue'
 import EventService from '@/service/EventService'
+import { useRouter } from 'vue-router'
+
 
 const events = ref<Event[] | null>(null)
 const totalEvents = ref(0)
-
+const router = useRouter()
 
 const props = defineProps({
   page: {
@@ -22,17 +24,18 @@ const props = defineProps({
 const page = computed(() => props.page)
 const perPage = computed(() => props.perPage) 
 
-watchEffect(() => {
+onMounted(() => {
   events.value = null 
-  
-  EventService.getEvents(perPage.value, page.value)
-    .then((response) => {
-      events.value = response.data
-      totalEvents.value = parseInt(response.headers['x-total-count'])
-    })
-    .catch((error) => {
-      console.error('There was an error!', error)
-    })
+  watchEffect(() => {
+    EventService.getEvents(perPage.value, page.value)
+      .then((response) => {
+        events.value = response.data
+        totalEvents.value = parseInt(response.headers['x-total-count'])
+      })
+      .catch(() => {
+        router.push({ name: 'network-error-view' })
+      })
+  })
 })
 
 const hasNextPage = computed(() => {
