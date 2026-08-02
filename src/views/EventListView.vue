@@ -2,7 +2,7 @@
 import EventCard from '@/components/EventCard.vue'
 import CategoryOrganizerCard from '@/components/CategoryOrganizerCard.vue'
 import type { Event } from '@/types'
-import { ref, computed, watchEffect, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import EventService from '@/service/EventService'
 import { useRouter } from 'vue-router'
 
@@ -20,12 +20,15 @@ const props = defineProps({
     required: true
   }
 })
+
 const page = computed(() => props.page)
 const perPage = computed(() => props.perPage) 
 
-onMounted(() => {
-  watchEffect(() => {
-    EventService.getEvents(perPage.value, page.value)
+// ใช้ watch เฝ้าดูทั้ง page และ perPage
+watch(
+  [page, perPage],
+  ([newPage, newPerPage]) => {
+    EventService.getEvents(newPerPage, newPage)
       .then((response) => {
         events.value = response.data
         totalEvents.value = parseInt(response.headers['x-total-count'])
@@ -33,8 +36,9 @@ onMounted(() => {
       .catch(() => {
         router.push({ name: 'network-error-view' })
       })
-  })
-})
+  },
+  { immediate: true }
+)
 
 const hasNextPage = computed(() => {
   const totalPages = Math.ceil(totalEvents.value / perPage.value)
