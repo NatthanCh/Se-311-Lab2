@@ -6,7 +6,6 @@ import { ref, computed, watchEffect, onMounted } from 'vue'
 import EventService from '@/service/EventService'
 import { useRouter } from 'vue-router'
 
-
 const events = ref<Event[] | null>(null)
 const totalEvents = ref(0)
 const router = useRouter()
@@ -25,7 +24,6 @@ const page = computed(() => props.page)
 const perPage = computed(() => props.perPage) 
 
 onMounted(() => {
-  events.value = null 
   watchEffect(() => {
     EventService.getEvents(perPage.value, page.value)
       .then((response) => {
@@ -59,7 +57,6 @@ const hasNextPage = computed(() => {
     <CategoryOrganizerCard v-for="event in events" :key="'cat-' + event.id" :event="event" />
     
     <div class="pagination">
-  
       <RouterLink
         :to="{ name: 'event-list-view', query: { page: page - 1, perPage: perPage } }"
         rel="prev"
