@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import EventCard from '@/components/EventCard.vue'
-import CategoryOrganizerCard from '@/components/CategoryOrganizerCard.vue'
 import type { Event } from '@/types'
 import { ref, computed, watch } from 'vue'
 import EventService from '@/service/EventService'
@@ -24,7 +23,6 @@ const props = defineProps({
 const page = computed(() => props.page)
 const perPage = computed(() => props.perPage) 
 
-// ใช้ watch เฝ้าดูทั้ง page และ perPage
 watch(
   [page, perPage],
   ([newPage, newPerPage]) => {
@@ -57,8 +55,8 @@ const hasNextPage = computed(() => {
   </div>
 
   <div class="flex flex-col items-center">
-   <EventCard v-for="event in events" :key="event.id" :event="event" />
-    <CategoryOrganizerCard v-for="event in events" :key="'cat-' + event.id" :event="event" />
+    <!-- เหลือแค่ EventCard ตามโจทย์ข้อ 2.2 -->
+    <EventCard v-for="event in events" :key="event.id" :event="event" />
     
     <div class="pagination">
       <RouterLink
@@ -81,7 +79,6 @@ const hasNextPage = computed(() => {
 </template>
 
 <style scoped>
-
 .pagination {
   display: flex;
   width: 290px;
