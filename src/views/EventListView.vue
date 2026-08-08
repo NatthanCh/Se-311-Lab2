@@ -90,4 +90,5 @@ const hasNextPage = computed(() => {
     </div>
   </div>
 </template>
+<style scoped></style>
 
