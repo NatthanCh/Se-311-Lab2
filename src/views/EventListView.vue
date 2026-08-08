@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import EventCard from '@/components/EventCard.vue'
+import CategoryOrganizerCard from '@/components/CategoryOrganizerCard.vue'
 import type { Event } from '@/types'
 import { ref, computed, watch } from 'vue'
 import EventService from '@/service/EventService'
@@ -23,6 +24,7 @@ const props = defineProps({
 const page = computed(() => props.page)
 const perPage = computed(() => props.perPage) 
 
+// ใช้ watch เฝ้าดูทั้ง page และ perPage
 watch(
   [page, perPage],
   ([newPage, newPerPage]) => {
@@ -54,9 +56,9 @@ const hasNextPage = computed(() => {
     <RouterLink :to="{ name: 'event-list-view', query: { page: 1, perPage: 6 } }" :class="{ active: perPage === 6 }">6</RouterLink>
   </div>
 
-
   <div class="flex flex-col items-center">
-    <EventCard v-for="event in events" :key="event.id" :event="event" />
+   <EventCard v-for="event in events" :key="event.id" :event="event" />
+    <CategoryOrganizerCard v-for="event in events" :key="'cat-' + event.id" :event="event" />
     
     <div class="pagination">
       <RouterLink
