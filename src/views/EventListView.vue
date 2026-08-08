@@ -47,22 +47,34 @@ const hasNextPage = computed(() => {
 <template>
   <h1>Events For Good</h1>
   
-  <div class="size-selector">
+  <div class="mb-4 text-center">
     <span>Events per page: </span>
-    <RouterLink :to="{ name: 'event-list-view', query: { page: 1, perPage: 2 } }" :class="{ active: perPage === 2 }">2</RouterLink> | 
-    <RouterLink :to="{ name: 'event-list-view', query: { page: 1, perPage: 4 } }" :class="{ active: perPage === 4 }">4</RouterLink> | 
-    <RouterLink :to="{ name: 'event-list-view', query: { page: 1, perPage: 6 } }" :class="{ active: perPage === 6 }">6</RouterLink>
+    <RouterLink 
+      :to="{ name: 'event-list-view', query: { page: 1, perPage: 2 } }" 
+      class="px-1 text-[#2c3e50] no-underline"
+      :class="{ 'font-bold underline': perPage === 2 }"
+    >2</RouterLink> | 
+    <RouterLink 
+      :to="{ name: 'event-list-view', query: { page: 1, perPage: 4 } }" 
+      class="px-1 text-[#2c3e50] no-underline"
+      :class="{ 'font-bold underline': perPage === 4 }"
+    >4</RouterLink> | 
+    <RouterLink 
+      :to="{ name: 'event-list-view', query: { page: 1, perPage: 6 } }" 
+      class="px-1 text-[#2c3e50] no-underline"
+      :class="{ 'font-bold underline': perPage === 6 }"
+    >6</RouterLink>
   </div>
 
   <div class="flex flex-col items-center">
-    <!-- เหลือแค่ EventCard ตามโจทย์ข้อ 2.2 -->
     <EventCard v-for="event in events" :key="event.id" :event="event" />
     
-    <div class="pagination">
+    <div class="flex w-[290px] mt-5">
       <RouterLink
         :to="{ name: 'event-list-view', query: { page: page - 1, perPage: perPage } }"
         rel="prev"
         v-if="page !== 1"
+        class="flex-1 text-left no-underline text-[#2c3e50] font-bold"
       >
         &#60; Prev Page
       </RouterLink>
@@ -71,6 +83,7 @@ const hasNextPage = computed(() => {
         :to="{ name: 'event-list-view', query: { page: page + 1, perPage: perPage } }"
         rel="next"
         v-if="hasNextPage"
+        class="flex-1 text-right no-underline text-[#2c3e50] font-bold"
       >
         Next Page &#62;
       </RouterLink>
@@ -78,33 +91,3 @@ const hasNextPage = computed(() => {
   </div>
 </template>
 
-<style scoped>
-.pagination {
-  display: flex;
-  width: 290px;
-  margin-top: 20px;
-}
-.pagination a {
-  flex: 1;
-  text-decoration: none;
-  color: #2c3e50;
-  font-weight: bold;
-}
-.pagination a[rel="next"] {
-  text-align: right;
-}
-.size-selector {
-  margin-bottom: 15px;
-  text-align: center;
-}
-.size-selector a {
-  text-decoration: none;
-  color: #2c3e50;
-  font-weight: normal;
-  padding: 0 5px;
-}
-.size-selector a.active {
-  font-weight: bold;
-  text-decoration: underline;
-}
-</style>

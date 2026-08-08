@@ -24,10 +24,3 @@ const {message} = storeToRefs(store)
     <RouterView />
   </div>
 </template>
-
-<style >
-
-#flashMessage {
-  animation: yellowFade 3s ease-in-out;
-}
-</style>
