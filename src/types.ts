@@ -18,3 +18,9 @@ export interface Student {
   image?: string
   description?: string
 }
+export interface MessageState {
+  message: string
+}
+export interface EventState {
+  event: Event | null
+}

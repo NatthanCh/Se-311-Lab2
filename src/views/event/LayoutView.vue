@@ -1,43 +1,41 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import UserService from '@/service/UserService'
+import { useRouter, RouterLink, RouterView } from 'vue-router'
+import { type Event } from '@/types'
+import EventService from '@/service/EventService'
 
-const props = defineProps<{ id: string }>()
-const user = ref<any | null>(null)
+const event = ref<Event | null>(null)
 const router = useRouter()
 
+const props = defineProps({
+    id: {
+        type: String,
+        required: true
+    }
+})
+
 onMounted(() => {
-  // ข้อ 6.3: ดึงรายละเอียดผู้ใช้จาก ID
-  UserService.getUser(Number(props.id))
-    .then((response) => {
-      // ดักจับกรณี API คืนค่าเป็น Object ว่าง (ไม่มีข้อมูลผู้ใช้)
-      if (!response.data || Object.keys(response.data).length === 0) {
-        throw new Error('404')
-      }
-      user.value = response.data
+    EventService.getEvent(Number(props.id))
+    .then((response)=>{
+        event.value = response.data
     })
-    .catch((error) => {
-      // ข้อ 6.6: ถ้าเจอ 404 ให้ส่งไปหน้า Resource-not-found พร้อมระบุประเภทเป็น 'user'
-      if (error.response && error.response.status === 404 || error.message === '404') {
+    .catch(() => {
         router.push({
-          name: '404-resource-view',
-          params: { resource: 'user' }
+            name: '404-resource-view',
+            params: { resource: 'event'}
         })
-      } else {
-        router.push({ name: 'network-error-view' })
-      }
     })
 })
 </script>
 
 <template>
-  <div v-if="user">
-    <h2>User: {{ user.name }}</h2>
+  <div v-if="event">
+    <h2>Event: {{ event.title }}</h2>
     <nav>
-      <RouterLink :to="{ name: 'user-profile' }">Profile</RouterLink> |
-      <RouterLink :to="{ name: 'user-posts' }">Posts</RouterLink>
+      <RouterLink :to="{ name: 'event-detail-view', params: { id } }">Details</RouterLink> |
+      <RouterLink :to="{ name: 'event-register-view', params: { id } }">Register</RouterLink> |
+      <RouterLink :to="{ name: 'event-edit-view', params: { id } }">Edit</RouterLink>
     </nav>
-    <RouterView :user="user" />
+    <RouterView :event="event" />
   </div>
 </template>

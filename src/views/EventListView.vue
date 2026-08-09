@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import EventCard from '@/components/EventCard.vue'
-import CategoryOrganizerCard from '@/components/CategoryOrganizerCard.vue'
 import type { Event } from '@/types'
-import { ref, computed, watchEffect } from 'vue'
+import { ref, computed, watch } from 'vue'
 import EventService from '@/service/EventService'
+import { useRouter } from 'vue-router'
 
 const events = ref<Event[] | null>(null)
 const totalEvents = ref(0)
-
+const router = useRouter()
 
 const props = defineProps({
   page: {
@@ -19,21 +19,24 @@ const props = defineProps({
     required: true
   }
 })
+
 const page = computed(() => props.page)
 const perPage = computed(() => props.perPage) 
 
-watchEffect(() => {
-  events.value = null 
-  
-  EventService.getEvents(perPage.value, page.value)
-    .then((response) => {
-      events.value = response.data
-      totalEvents.value = parseInt(response.headers['x-total-count'])
-    })
-    .catch((error) => {
-      console.error('There was an error!', error)
-    })
-})
+watch(
+  [page, perPage],
+  ([newPage, newPerPage]) => {
+    EventService.getEvents(newPerPage, newPage)
+      .then((response) => {
+        events.value = response.data
+        totalEvents.value = parseInt(response.headers['x-total-count'])
+      })
+      .catch(() => {
+        router.push({ name: 'network-error-view' })
+      })
+  },
+  { immediate: true }
+)
 
 const hasNextPage = computed(() => {
   const totalPages = Math.ceil(totalEvents.value / perPage.value)
@@ -44,23 +47,34 @@ const hasNextPage = computed(() => {
 <template>
   <h1>Events For Good</h1>
   
-  <div class="size-selector">
+  <div class="mb-4 text-center">
     <span>Events per page: </span>
-    <RouterLink :to="{ name: 'event-list-view', query: { page: 1, perPage: 2 } }" :class="{ active: perPage === 2 }">2</RouterLink> | 
-    <RouterLink :to="{ name: 'event-list-view', query: { page: 1, perPage: 4 } }" :class="{ active: perPage === 4 }">4</RouterLink> | 
-    <RouterLink :to="{ name: 'event-list-view', query: { page: 1, perPage: 6 } }" :class="{ active: perPage === 6 }">6</RouterLink>
+    <RouterLink 
+      :to="{ name: 'event-list-view', query: { page: 1, perPage: 2 } }" 
+      class="px-1 text-[#2c3e50] no-underline"
+      :class="{ 'font-bold underline': perPage === 2 }"
+    >2</RouterLink> | 
+    <RouterLink 
+      :to="{ name: 'event-list-view', query: { page: 1, perPage: 4 } }" 
+      class="px-1 text-[#2c3e50] no-underline"
+      :class="{ 'font-bold underline': perPage === 4 }"
+    >4</RouterLink> | 
+    <RouterLink 
+      :to="{ name: 'event-list-view', query: { page: 1, perPage: 6 } }" 
+      class="px-1 text-[#2c3e50] no-underline"
+      :class="{ 'font-bold underline': perPage === 6 }"
+    >6</RouterLink>
   </div>
 
-  <div class="events">
+  <div class="flex flex-col items-center">
     <EventCard v-for="event in events" :key="event.id" :event="event" />
-    <CategoryOrganizerCard v-for="event in events" :key="'cat-' + event.id" :event="event" />
     
-    <div class="pagination">
-  
+    <div class="flex w-[290px] mt-5">
       <RouterLink
         :to="{ name: 'event-list-view', query: { page: page - 1, perPage: perPage } }"
         rel="prev"
         v-if="page !== 1"
+        class="flex-1 text-left no-underline text-[#2c3e50] font-bold"
       >
         &#60; Prev Page
       </RouterLink>
@@ -69,45 +83,12 @@ const hasNextPage = computed(() => {
         :to="{ name: 'event-list-view', query: { page: page + 1, perPage: perPage } }"
         rel="next"
         v-if="hasNextPage"
+        class="flex-1 text-right no-underline text-[#2c3e50] font-bold"
       >
         Next Page &#62;
       </RouterLink>
     </div>
   </div>
 </template>
+<style scoped></style>
 
-<style scoped>
-.events {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.pagination {
-  display: flex;
-  width: 290px;
-  margin-top: 20px;
-}
-.pagination a {
-  flex: 1;
-  text-decoration: none;
-  color: #2c3e50;
-  font-weight: bold;
-}
-.pagination a[rel="next"] {
-  text-align: right;
-}
-.size-selector {
-  margin-bottom: 15px;
-  text-align: center;
-}
-.size-selector a {
-  text-decoration: none;
-  color: #2c3e50;
-  font-weight: normal;
-  padding: 0 5px;
-}
-.size-selector a.active {
-  font-weight: bold;
-  text-decoration: underline;
-}
-</style>
